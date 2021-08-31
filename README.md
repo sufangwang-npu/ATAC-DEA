@@ -47,7 +47,7 @@ ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high
 
 ### Data Requirements
 
-<img src="D:\Coding\Project_file\Project_R\ATAC_Web_Visua\WWW\CountR.jpg" alt="CountR" style="zoom:70%;" />
+<img src="https://github.com/sufangwang-npu/ATAC-DEA/WWW/CountR.jpg" alt="CountR" style="zoom:70%;" />
 
 1. DEList[.csv]:sample sheet contains the main information of each sample
 2. mapping results files[.bam]
@@ -57,7 +57,7 @@ ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high
 
 ### Example DEList format
 
-<img src="D:\Coding\Project_file\Project_R\ATAC_Web_Visua\WWW\DEList.jpg" alt="DEList" style="zoom:70%;" />
+<img src="https://github.com/sufangwang-npu/ATAC-DEA/WWW/DEList.jpg" alt="DEList" style="zoom:70%;" />
 
 **SampleID:** ID of each sample
 
