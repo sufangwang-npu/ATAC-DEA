@@ -1,0 +1,12 @@
+name,datapath
+BT474_ER_1,Data/DiffBindExamplePeaks/BT474_ER_1.bed
+BT474_ER_2,Data/DiffBindExamplePeaks/BT474_ER_2.bed
+MCF7_ER_1,Data/DiffBindExamplePeaks/MCF7_ER_1.bed
+MCF7_ER_2,Data/DiffBindExamplePeaks/MCF7_ER_2.bed
+MCF7_ER_3,Data/DiffBindExamplePeaks/MCF7_ER_3.bed
+T47D_ER_1,Data/DiffBindExamplePeaks/T47D_ER_1.bed
+T47D_ER_2,Data/DiffBindExamplePeaks/T47D_ER_2.bed
+TAMR_ER_1,Data/DiffBindExamplePeaks/TAMR_ER_1.bed
+TAMR_ER_2,Data/DiffBindExamplePeaks/TAMR_ER_2.bed
+ZR75_ER_1,Data/DiffBindExamplePeaks/ZR75_ER_1.bed
+ZR75_ER_2,Data/DiffBindExamplePeaks/ZR75_ER_2.bed
