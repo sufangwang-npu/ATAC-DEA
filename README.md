@@ -45,9 +45,9 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high quality figures. The ATAC-DEA allows users to visualize differential expression(DE) peaks and do annotation. Explore the app's features with the example data set pre-loaded. Upload your genes Expression data first,then submit your data.  
 
 
-### Data preparation and pretreatment
+### Data Preparation and Pretreatment
 
-#### Data Requirements
+#### Data requirements
 
 ![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/CountR.jpg)
 
@@ -78,7 +78,7 @@ ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high
 
 
 
-#### process the three files
+#### Process the three files
 
 The three files need to be processed in order to get the right format which can be operated by ATAC-DEA. We wrote a script, called readCount.R, for user to easily do pretreatment. It will take the three needed files and output a peak data collection file which is used as the input of ATAC-DEA.
 
