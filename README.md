@@ -33,7 +33,7 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 
 ## Citation
 
-  If you want to use this app, please cite as: ATAC-DEA: a web-based ATAC-seq data differential expression and annotation analysis application (in preparation)
+  If you want to use this app, please cite as: Shilong Zhang, Sufang Wang. ATAC-DEA: a web-based ATAC-seq data differential expression and annotation analysis application (in preparation)
 
 
 
