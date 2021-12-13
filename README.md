@@ -1,13 +1,12 @@
 # ATAC-DEA
-
 Differential Expression and Annotation of peak in ATAC-seq analyses application (ATAC-DEA)
 Copyright (C) 2021 sufangwang-npu  
 
 
 
 ## Information for the ATAC-DEA App
+ATAC-DEA is implemented in R as a Shiny application. The webpage is free to access: http://114.55.42.115/ATAC-DEA. The source code could be downloaded from github: https://github.com/sufangwang-npu/ATAC-DEA. To use ATAC-DEA, users could do in two ways: (1) run ATAC-DEA directly through the webpage; (2) download the source code and drive the package in R or RStudio locally. 
 
-Code canbe found on github:https://github.com/sufangwang-npu/ATAC-DEA.  
 To run this app locally on your machine,download R or Rstudio and run the following command once to set up the environment:  
 install.packages(c("shiny","shinydashboard","BiocManager","DiffBind","shinyjs","bslib","ChIPpeakAnno","ggplot2","dplyr","DT","reactome.db","RColorBrewer","TxDb.Hsapiens.UCSC.hg19.knownGene","EnsDb.Hsapiens.v75","org.Hs.eg.db","TxDb.Mmusculus.UCSC.mm10.knownGene","EnsDb.Mmusculus.v79","org.Mm.eg.db"))  
 
@@ -45,9 +44,7 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
   ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high quality figures. The ATAC-DEA allows users to visualize differential expression(DE) peaks and do annotation. Explore the app's features with the example data set pre-loaded. Upload your genes Expression data first,then submit your data.  
 
 
-### Data Preparation and Pretreatment
-
-#### Data requirements
+### Data Pretreatment
 
 ![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/CountR.jpg)
 
