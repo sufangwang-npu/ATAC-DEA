@@ -5,7 +5,16 @@ Copyright (C) 2021 sufangwang-npu
 
 
 ## Information for the ATAC-DEA App
-ATAC-DEA is implemented in R as a Shiny application. The webpage is free to access: http://114.55.42.115/ATAC-DEA. The source code could be downloaded from github: https://github.com/sufangwang-npu/ATAC-DEA. To use ATAC-DEA, users could do in two ways: (1) run ATAC-DEA directly through the webpage; (2) download the source code and drive the package in R or RStudio locally. 
+ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high quality figures. The ATAC-DEA allows users to visualize differential expression(DE) peaks and do annotation. Explore the app's features with the example data set pre-loaded. Upload your genes Expression data first,then submit your data. To use ATAC-DEA, users could do in two ways: (1) run ATAC-DEA directly through the webpage; (2) download the source code and drive the package in R or RStudio locally. 
+
+ATAC-DEA website: http://www.atac-dea.xyz:3838/ATAC-DEA
+
+ATAC-DEA source: https://github.com/sufangwang-npu/ATAC-DEA
+
+Operating system(s): Platform independent
+
+Programming language: R
+
 
 To run this app locally on your machine,download R or Rstudio and run the following command once to set up the environment:  
 install.packages(c("shiny","shinydashboard","BiocManager","DiffBind","shinyjs","bslib","ChIPpeakAnno","ggplot2","dplyr","DT","reactome.db","RColorBrewer","TxDb.Hsapiens.UCSC.hg19.knownGene","EnsDb.Hsapiens.v75","org.Hs.eg.db","TxDb.Mmusculus.UCSC.mm10.knownGene","EnsDb.Mmusculus.v79","org.Mm.eg.db"))  
@@ -39,16 +48,13 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 
 ## Instruction
 
+
 ### Get a quick start of ATAC-DEA
 
   ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high quality figures. The ATAC-DEA allows users to visualize differential expression(DE) peaks and do annotation. Explore the app's features with the example data set pre-loaded. Upload your genes Expression data first,then submit your data.  
 
 
-### Data Pretreatment
-
-![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/CountR.jpg)
-
-
+### Required files in pretreatment
 1. DEList[.csv]:sample sheet contains the main information of each sample
 2. mapping results files[.bam]
 3. peak calling results files[.bed]
@@ -74,16 +80,91 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 **PeakCaller:** Suffix of peak calling results files[.bed] (***necessary***)
 
 
+### ATAC-DEA Data Pretreatment Guide
+#### 1.	Organize your data files
+To do data pretreatment, three files are needed. We recommend organizing all of the data files in one directory, and placing mapping results files (generally .bam file) in ‘./reads’; placing peak calling results files (generally .bed file) in ‘./peaks’. We use some example files in ‘ATAC-DEA/ATAC-DEA_DataPretreatment/extra’ to hint.
 
-#### Process the three files
+#### 2. Install dependency packages
+Before the work, some dependency packages needs to be installed
+```
+install.packages(c("shiny", "shinyFiles", "stringr"))
+                      
+if (!require("BiocManager", quietly = TRUE))
+                      
+install.packages("BiocManager")
+                      
+BiocManager::install("DiffBind")
+```
 
-  The three files need to be processed in order to get the right format which can be operated by ATAC-DEA. We wrote a script, called readCount.R, for user to easily do pretreatment. It will take the three needed files and output a peak data collection file which is used as the input of ATAC-DEA.
+#### 3.	Run pretreatment shiny app
+We design a local shiny app to help you do pretreatment. Firstly, you can download the source of ATAC-DEA including Data Pretreatment APP in Github ATAC-DEA. After that, you can run these commands in terminal to start the app:
+```
+#cd ./ATAC-DEA/ATAC-DEA_DataPretreatment
+                      
+#R -e 'shiny::runApp ()'
+```
+After the all starts successfully, type the url (http://127.0.0.1:xxxx typically) in your browser.
 
-1. change the directory to your own
-2. choose the count option according to your time and computer
-3. save the peak collection result file to your working directory  
-  
-  
+Or, you can run this app in Rstudio.
+#### 4.	The panel of ATAC-DEA_DataPretreatment
+ATAC-DEA_DataPretreatment helps you build up the sample sheet that DiffBind needs.
+
+1)	Open ‘Create DEList’ tab. If you have completed DEList, you can directly upload it and you can also edit it in this panel.
+
+2)	Set the work space, if the datapath in your DEList is relative path. The final result file ‘peak_data_collection’ file will also be sived in the work space
+
+3)	Input the information of your sample. The DEList in ATAC-DEA/ATAC-DEA_DataPretreatment/extra shows what each variable represents.
+
+4)	Select the mapping results file and peak calling results file of each sample. These two buttons only record the relative paths, so don't need to worry about the size of files.
+
+5)	Select ‘Insert’ to add a new line and select ‘remove’ to remove the latest line.
+
+6)	You can check your DEList here
+
+7)	When both DEList and work space are done, you can select ‘complete’ to go to the next step. If one of these two steps has not been done, ‘complete’ button will not response.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/1.jpg)
+
+8) The page will automatically redirect to readCount tab. You can check your DEList again. If there is no mistake, you can press ‘Do Analysis!’ to start counting the reads. It will take some time, depending on your computer.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/2.png)
+
+9) When counting is done, a message window will pop out and a file named peak_data_collection will be saved in your work space. Now you can upload this file in ATAC-DEA to explore your data.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/3.png)
+
+### ATAC-DEA Quick-start Tutorial
+This quick-start tutorial will guide you through using the example data to do DE & annotation analysis, and visualize the result.
+
+Open http://www.atac-dea.xyz:3838/ATAC-DEA
+
+1.	In the ‘Upload Your Data’ tab, you can select to use example or your own data
+
+1)	Example data: no files need to be uploaded. ATAC-DEA will use data of breast cancer cell to help you explore it.
+
+2)	Your own data: upload your peak collection result file generated in pretreatment step and peak calling results files of your data. You can check your data in ‘Check your Sample Sheet’ box.
+
+2.	Select the organism of your data: ATAC-DEA now provides ‘Homo sapiens’ and ‘Mus musculus’ to select. When all above is done, select ‘Go Next’ button
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial1.jpg)
+
+3.	A new sub tab ‘Contrast Design’ will be created and you can design your contrast model. You can use default option to explore ATAC-DEA. The detail of other options is listed in the paper. After that, select ‘Do analysis’ to process the analysis and it will take some time.
+
+4.	ATAC-DEA will analysis all possible contrast results in your contrast model and show them at the bottom of the box for you to select. Because the table is interactive, you can directly select one for further analysis.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial2.jpg)
+
+5.	Four new tabs will be shown in sidebar, and you can explore the analysis results by selecting ‘Data Report’, ‘DE Analysis’ and ‘Peak Annotation’
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial3.jpg)
+
+6.	Filter is used to set threshold and method (DESeq2 and edgeR are provided) in volcano plot.
+
+7.	Volcano plot is interactive, so you can use brush to select some dots and check their information.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial4.jpg)
+
+8.	Explore the result of DE analysis in ‘Volcano’, ‘PCA’, ‘Heatmap’ and ‘KEGG&GO’ sub tabs
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial5.jpg)
+
+9.	In ‘Peak Annotation’ tab, you should select the samples you would like to annotate (more than 2 and no more than 5 otherwise ATAC-DEA cannot get overlaps)
+
+10.	ATAC-DEA will show all overlaps according to the samples you selected. After that select ‘Do Analysis!’ and select the sub tabs to explore the results of annotation.
+![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial6.jpg)
+
   
   
 ### Data Input
