@@ -1,6 +1,23 @@
 
 deServer <- function(input, output,session) {
 
+  library(BiocManager)
+  library(DiffBind)
+  library(bslib)
+  library(ChIPpeakAnno)
+  library(ggplot2)
+  library(dplyr)
+  library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+  library(EnsDb.Hsapiens.v75)
+  library(org.Hs.eg.db)
+  library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+  library(EnsDb.Mmusculus.v79)
+  library(org.Mm.eg.db)
+  library(DT)
+  library(reactome.db)
+  library(RColorBrewer)
+  library(GO.db)
+
 
   # DiffBind Reactive Section --------------------------------------------------------
   #
@@ -198,29 +215,31 @@ deServer <- function(input, output,session) {
 
   observeEvent(input$goContrast,{
 
-    if(input$annotationDatabase == 'Homo sapiens'){
+    withProgress(message = 'Doing Analysis', value = 0.5,{
+      if(input$annotationDatabase == 'Homo sapiens'){
 
-      annoData_Hsapines <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
-      # annoData_Hsapines <- load("Data/AnnoDatabase/annoData_Hsapines")
-      # annoData_Hsapines <- get(annoData_Hsapines)
+        annoData_Hsapines <- toGRanges(EnsDb.Hsapiens.v75, feature="gene")
+        # annoData_Hsapines <- load("Data/AnnoDatabase/annoData_Hsapines")
+        # annoData_Hsapines <- get(annoData_Hsapines)
 
-      annoData <<- annoData_Hsapines
-      annoEnsDb <<- EnsDb.Hsapiens.v75
-      annoTxDb <<- TxDb.Hsapiens.UCSC.hg19.knownGene
-      annoOrg <<- "org.Hs.eg.db"
+        annoData <<- annoData_Hsapines
+        annoEnsDb <<- EnsDb.Hsapiens.v75
+        annoTxDb <<- TxDb.Hsapiens.UCSC.hg19.knownGene
+        annoOrg <<- "org.Hs.eg.db"
 
-    }else if (input$annotationDatabase == 'Mus musculus'){
+      }else if (input$annotationDatabase == 'Mus musculus'){
 
-      # annoData_Mmusculus <- toGRanges(EnsDb.Mmusculus.v79, feature="gene")
-      annoData_Mmusculus <- load("Data/AnnoDatabase/annoData_Mmusculus")
-      annoData_Mmusculus <- get(annoData_Mmusculus)
+        # annoData_Mmusculus <- toGRanges(EnsDb.Mmusculus.v79, feature="gene")
+        annoData_Mmusculus <- load("Data/AnnoDatabase/annoData_Mmusculus")
+        annoData_Mmusculus <- get(annoData_Mmusculus)
 
-      annoData <<- annoData_Mmusculus
-      annoEnsDb <<- EnsDb.Mmusculus.v79
-      annoTxDb <<- TxDb.Mmusculus.UCSC.mm10.knownGene
-      annoOrg <<- "org.Mm.eg.db"
+        annoData <<- annoData_Mmusculus
+        annoEnsDb <<- EnsDb.Mmusculus.v79
+        annoTxDb <<- TxDb.Mmusculus.UCSC.mm10.knownGene
+        annoOrg <<- "org.Mm.eg.db"
 
-    }
+      }
+    })
   })
 
   #################
@@ -430,29 +449,28 @@ deServer <- function(input, output,session) {
   # When user successfully upload the data and press 'Go Next' button,
   # The contrast design Panel will show
   observeEvent(input$goContrast,{
+      insertTab(
+        inputId = "dataUpload_ContrastDesign",
+        tabPanel(title="Contrast Design", id="dbaContrastDesign",
+                 fluidRow(
+                   box(
+                     title="Design your contrast", status = "primary", solidHeader = TRUE,
+                     collapsible = TRUE, width = 12,
+                     column(12,selectInput("contrastMode","Which kind of contrast mode would you like to use?",
+                                           choices = c("Set up a specific contrast",
+                                                       "Set up a all possible contrasts"),
+                                           selected = 1,width = '80%')),
+                     column(12,uiOutput("numberOfFactor")),
+                     column(12,uiOutput("constractDesignSelection")),
+                     column(8,actionButton("start","Do Contrast")),
+                     column(12,uiOutput("contrastResultReturn")),
+                     column(12,DT::dataTableOutput("allPossibleContrastInModeII"))
 
-    insertTab(
-      inputId = "dataUpload_ContrastDesign",
-      tabPanel(title="Contrast Design", id="dbaContrastDesign",
-               fluidRow(
-                 box(
-                   title="Design your contrast", status = "primary", solidHeader = TRUE,
-                   collapsible = TRUE, width = 12,
-                   column(12,selectInput("contrastMode","Which kind of contrast mode would you like to use?",
-                                         choices = c("Set up a specific contrast",
-                                                     "Set up a all possible contrasts"),
-                                         selected = 1,width = '80%')),
-                   column(12,uiOutput("numberOfFactor")),
-                   column(12,uiOutput("constractDesignSelection")),
-                   column(8,actionButton("start","Do Contrast")),
-                   column(12,uiOutput("contrastResultReturn")),
-                   column(12,DT::dataTableOutput("allPossibleContrastInModeII"))
-
-                 ),
-               )),
-      target = "Data Upload",
-      position = "after"
-    )
+                   ),
+                 )),
+        target = "Data Upload",
+        position = "after"
+      )
 
     updateTabsetPanel(
       session = getDefaultReactiveDomain(),
@@ -519,7 +537,7 @@ deServer <- function(input, output,session) {
     output$allPossibleContrastInModeII <- DT::renderDataTable({
       dbaObject <- dbaAnalysis()
       dba.show(dbaObject,bContrasts=TRUE)
-    }, options = list(dom = 't',ordering=FALSE,autoWidth=TRUE,columnDefs = list(list(width = '100px'))),
+    }, options = list(dom = 't',ordering=FALSE,autoWidth=TRUE),
     selection=list(mode="single"),
 
     )
@@ -765,13 +783,13 @@ deServer <- function(input, output,session) {
 
         box(title="Genomic Element Distribution of Duplicates", status = "primary", solidHeader = TRUE,
             collapsible = TRUE, width=12,
-            plotOutput("ChIPpeakAnno_DuplicateDistribution"),
+            plotOutput("ChIPpeakAnno_DuplicateDistribution")%>% withSpinner(color="#3c8cbc"),
             actionButton("duplicateDistributionPlot","Plot",class="btn-primary",style="color:white"),
             downloadButton("downloadDuplicateDistribution_AN", "Download GEDD Plot")),
 
         box(title="Genomic Element Distribution of Overlaps", status = "primary", solidHeader = TRUE,
             collapsible = TRUE, width=6,
-            plotOutput("ChIPpeakAnno_OverlapDistribution"),
+            plotOutput("ChIPpeakAnno_OverlapDistribution")%>% withSpinner(color="#3c8cbc"),
             actionButton("overlapDistributionPlot","Plot",class="btn-primary",style="color:white"),
             downloadButton("downloadOverlapDistributionPlot_AN", "Download GEDO Plot"))
       )
@@ -810,7 +828,7 @@ deServer <- function(input, output,session) {
         fluidRow(
           box(title="Venn Plot", status = "primary", solidHeader = TRUE,
               collapsible = TRUE,width=8,
-              plotOutput("ChIPpeakAnno_Venn"),
+              plotOutput("ChIPpeakAnno_Venn")%>% withSpinner(color="#3c8cbc"),
               downloadButton("downloadVennPlot_AN", "Download Venn Plot")),
 
           tabBox(title ="Option", width=4,id = "overlapOption", height = "250px",
@@ -905,12 +923,12 @@ deServer <- function(input, output,session) {
       fluidRow(
         box(title="Annotate the Overpal Peaks to the Promoter Regions Reporter", status = "primary", solidHeader = TRUE,
             collapsible = TRUE, width=8,
-            verbatimTextOutput("ChIPpeakAnno_PeakAnnotation_Table"),
+            verbatimTextOutput("ChIPpeakAnno_PeakAnnotation_Table")%>% withSpinner(color="#3c8cbc"),
             downloadButton("downloadAnnotatePeaksData", "Download Annotation Table")),
 
         box(title="Overlap Pie Plot",status = "primary", solidHeader = TRUE,
             collapsible = TRUE,width=4,
-            plotOutput("ChIPpeakAnno_PeakAnnotation_Pie"),
+            plotOutput("ChIPpeakAnno_PeakAnnotation_Pie")%>% withSpinner(color="#3c8cbc"),
             downloadButton("downloadAnnotatePiePlot", "Download the Overlap Pie plot"))
       )
     }
@@ -1104,6 +1122,7 @@ deServer <- function(input, output,session) {
     sampleSheet <- sampleSheet_list$samples
 
     sampleSheet <- cbind(sampleSheet[,1:6],sampleSheet[c("ControlID")],sampleSheet[,10:11])
+    colnames(sampleSheet)[9]<-"DataFormat"
     sampleSheet
 
   })
@@ -1549,7 +1568,7 @@ deServer <- function(input, output,session) {
     KEGG_DE_Pathway <- DE_Annotation_KEGG()
     KEGG_DE_Title <- paste("KEGG pathway enrichment")
 
-    KEGG_DE_Pathway_Subset <- filter(KEGG_DE_Pathway, pvalue <= input$fdr)
+    KEGG_DE_Pathway_Subset <- dplyr::filter(KEGG_DE_Pathway, pvalue <= input$fdr)
 
     KEGG_DE <- KEGGplot(KEGG_DE_Pathway_Subset, KEGG_DE_Title)
     KEGG_DE
@@ -1562,7 +1581,7 @@ deServer <- function(input, output,session) {
     KEGG_Overlap_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table()
     KEGG_Overlap_Title <- paste("Overlap KEGG pathway enrichment")
 
-    KEGG_Overlap_Pathway_Subset <- filter(KEGG_Overlap_Pathway, pvalue <= input$fdr)
+    KEGG_Overlap_Pathway_Subset <- dplyr::filter(KEGG_Overlap_Pathway, pvalue <= input$fdr)
 
     # Draw the plot
     KEGG_Overlap <- KEGGplot(KEGG_Overlap_Pathway_Subset, KEGG_Overlap_Title)
@@ -1581,7 +1600,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(1)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_1,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -1600,7 +1619,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(2)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_2,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -1619,7 +1638,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(3)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_3,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -1638,7 +1657,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(4)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_4, "KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -1657,7 +1676,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(5)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_5, "KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -1679,7 +1698,7 @@ deServer <- function(input, output,session) {
     GObp_DE_Pathway <- GO_DE$bp
     GObp_DE_Title <- paste("GO biological process enrichment")
 
-    GObp_DE_Pathway_Subset <- filter(GObp_DE_Pathway, pvalue <= input$fdr)
+    GObp_DE_Pathway_Subset <- dplyr::filter(GObp_DE_Pathway, pvalue <= input$fdr)
 
     GObp_DE_plot <- GObpPlot(GObp_DE_Pathway_Subset, GObp_DE_Title)
     GObp_DE_plot
@@ -1693,7 +1712,7 @@ deServer <- function(input, output,session) {
     GObp_Overlap_Pathway <- GO_Overlap$bp
     GObp_Overlap_Title <- paste("Overlap GO biological process enrichment")
 
-    GObp_Overlap_Pathway_Subset <- filter(GObp_Overlap_Pathway, pvalue <= input$fdr)
+    GObp_Overlap_Pathway_Subset <- dplyr::filter(GObp_Overlap_Pathway, pvalue <= input$fdr)
 
     # Draw the plot
     GObp_Overlap_plot <- GObpPlot(GObp_Overlap_Pathway_Subset, GObp_Overlap_Title)
@@ -1713,7 +1732,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_1,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -1733,7 +1752,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_2,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -1753,7 +1772,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_3,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -1773,7 +1792,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_4,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -1793,7 +1812,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_5,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -2221,7 +2240,7 @@ deServer <- function(input, output,session) {
       KEGG_DE_Pathway <- DE_Annotation_KEGG()
       KEGG_DE_Title <- paste("KEGG pathway enrichment")
 
-      KEGG_DE_Pathway_Subset <- filter(KEGG_DE_Pathway, pvalue <= input$fdr)
+      KEGG_DE_Pathway_Subset <- dplyr::filter(KEGG_DE_Pathway, pvalue <= input$fdr)
 
       KEGG_DE <- KEGGplot(KEGG_DE_Pathway_Subset, KEGG_DE_Title)
       print(KEGG_DE)
@@ -2245,7 +2264,7 @@ deServer <- function(input, output,session) {
       KEGG_Overlap_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table()
       KEGG_Overlap_Title <- paste("Overlap KEGG pathway enrichment")
 
-      KEGG_Overlap_Pathway_Subset <- filter(KEGG_Overlap_Pathway, pvalue <= input$fdr)
+      KEGG_Overlap_Pathway_Subset <- dplyr::filter(KEGG_Overlap_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Overlap <- KEGGplot(KEGG_Overlap_Pathway_Subset, KEGG_Overlap_Title)
@@ -2276,7 +2295,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(1)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_1, "KEGG pathway enrichment", sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -2305,7 +2324,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(2)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_2, "KEGG pathway enrichment", sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -2335,7 +2354,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(3)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_3,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -2368,7 +2387,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(4)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_4,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -2399,7 +2418,7 @@ deServer <- function(input, output,session) {
       KEGG_Individual_Pathway <- ChIPpeakAnno_PeakAnnotation_PathwayPlot_Table_i(5)
       KEGG_Individual_Title <- paste(overlapSelection_UserInput_5,"KEGG pathway enrichment",sep=" ")
 
-      KEGG_Individual_Pathway_Subset <- filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
+      KEGG_Individual_Pathway_Subset <- dplyr::filter(KEGG_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       KEGG_Individual <- KEGGplot(KEGG_Individual_Pathway_Subset, KEGG_Individual_Title)
@@ -2432,7 +2451,7 @@ deServer <- function(input, output,session) {
       GObp_DE_Pathway <- GO_DE$bp
       GObp_DE_Title <- paste("GO biological process enrichment")
 
-      GObp_DE_Pathway_Subset <- filter(GObp_DE_Pathway, pvalue <= input$fdr)
+      GObp_DE_Pathway_Subset <- dplyr::filter(GObp_DE_Pathway, pvalue <= input$fdr)
 
       GObp_DE_plot <- GObpPlot(GObp_DE_Pathway_Subset, GObp_DE_Title)
       print(GObp_DE_plot)
@@ -2457,7 +2476,7 @@ deServer <- function(input, output,session) {
       GObp_Overlap_Pathway <- GO_Overlap$bp
       GObp_Overlap_Title <- paste("Overlap GO biological process enrichment")
 
-      GObp_Overlap_Pathway_Subset <- filter(GObp_Overlap_Pathway, pvalue <= input$fdr)
+      GObp_Overlap_Pathway_Subset <- dplyr::filter(GObp_Overlap_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Overlap_plot <- GObpPlot(GObp_Overlap_Pathway_Subset, GObp_Overlap_Title)
@@ -2489,7 +2508,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_1,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -2520,7 +2539,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_2,"GO biological process enrichment",sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -2551,7 +2570,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_3, "GO biological process enrichment", sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -2582,7 +2601,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_4, "GO biological process enrichment", sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
@@ -2613,7 +2632,7 @@ deServer <- function(input, output,session) {
       GObp_Individual_Pathway <- GO_Individual$bp
       GObp_Individual_Title <- paste(overlapSelection_UserInput_5, "GO biological process enrichment", sep=" ")
 
-      GObp_Individual_Pathway_Subset <- filter(GObp_Individual_Pathway, pvalue <= input$fdr)
+      GObp_Individual_Pathway_Subset <- dplyr::filter(GObp_Individual_Pathway, pvalue <= input$fdr)
 
       # Draw the plot
       GObp_Individual_plot <- GObpPlot(GObp_Individual_Pathway_Subset, GObp_Individual_Title)
