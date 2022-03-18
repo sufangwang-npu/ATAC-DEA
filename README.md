@@ -11,6 +11,7 @@ ATAC-DEA website: http://www.atac-dea.xyz:3838/ATAC-DEA
 
 ATAC-DEA source: https://github.com/sufangwang-npu/ATAC-DEA
 
+
 Operating system(s): Platform independent
 
 Programming language: R
@@ -97,7 +98,7 @@ BiocManager::install("DiffBind")
 ```
 
 #### 3.	Run pretreatment shiny app
-We design a local shiny app to help you do pretreatment. Firstly, you can download the source of ATAC-DEA including Data Pretreatment APP in Github ATAC-DEA. After that, you can run these commands in terminal to start the app:
+We design a local shiny app to help you do pretreatment. Firstly, you can download the source of ATAC-DEA including Data Pretreatment APP in Github ATAC-DEA (extra example pretreatment files: 59.110.11.223:3838/ATAC-DEA_DataPretreatment.zip). After that, you can run these commands in terminal to start the app:
 ```
 #cd ./ATAC-DEA/ATAC-DEA_DataPretreatment
                       
