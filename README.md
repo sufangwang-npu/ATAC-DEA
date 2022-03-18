@@ -103,7 +103,7 @@ We design a local shiny app to help you do pretreatment. Firstly, you can downlo
                       
 #R -e 'shiny::runApp ()'
 ```
-After the all starts successfully, type the url (http://127.0.0.1:xxxx typically) in your browser.
+After the all starts successfully, type the url (http://127.0.0.1:xxxx) in your browser.
 
 Or, you can run this app in Rstudio.
 #### 4.	The panel of ATAC-DEA_DataPretreatment
