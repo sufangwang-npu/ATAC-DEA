@@ -14,7 +14,7 @@ ATAC-DEA source: https://github.com/sufangwang-npu/ATAC-DEA
 
 Operating system(s): Platform independent
 
-Programming language: R
+Programming language: R(>= 4.0)
 
 
 To run this app locally on your machine,download R or Rstudio and run the following command once to set up the environment:  
