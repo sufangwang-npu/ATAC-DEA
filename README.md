@@ -9,7 +9,7 @@ ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high
 
 ATAC-DEA website: http://www.atac-dea.xyz:3838/ATAC-DEA
 
-ATAC-DEA source: https://github.com/sufangwang-npu/ATAC-DEA
+ATAC-DEA source code: https://github.com/sufangwang-npu/ATAC-DEA
 
 
 Operating system(s): Platform independent
@@ -43,7 +43,7 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 
 ## Citation
 
-  If you want to use this app, please cite as: Shilong Zhang, Sufang Wang. ATAC-DEA: a web-based ATAC-seq data differential expression and annotation analysis application (in preparation)
+  If you want to use this app, please cite as: Shilong Zhang, Sufang Wang. ATAC-DEA: a web-based ATAC-seq data differential expression and annotation analysis application (under revision)
   
 
 
@@ -55,7 +55,7 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
   ATAC-DEA is a web-based platform to help you analyze ATAC-seq data and plot high quality figures. The ATAC-DEA allows users to visualize differential expression(DE) peaks and do annotation. Explore the app's features with the example data set pre-loaded. Upload your genes Expression data first,then submit your data.  
 
 
-### Required files in pretreatment
+### Required files in preparation
 1. DEList[.csv]:sample sheet contains the main information of each sample
 2. mapping results files[.bam]
 3. peak calling results files[.bed]
@@ -81,9 +81,9 @@ You may contact the author of this code, Sufang Wang, at <sufangwang@nwpu.edu.cn
 **PeakCaller:** Suffix of peak calling results files[.bed] (***necessary***)
 
 
-### ATAC-DEA Data Pretreatment Guide
+### ATAC-DEA Data Preparation Guide
 #### 1.	Organize your data files
-To do data pretreatment, three files are needed. We recommend organizing all of the data files in one directory, and placing mapping results files (generally .bam file) in ‘./reads’; placing peak calling results files (generally .bed file) in ‘./peaks’. We use some example files in ‘ATAC-DEA/ATAC-DEA_DataPretreatment/extra’ to hint.
+To do data preparation, three files are needed. We recommend organizing all of the data files in one directory, and placing mapping results files (generally .bam file) in ‘./reads’; placing peak calling results files (generally .bed file) in ‘./peaks’. We use some example files in ‘ATAC-DEA/preparation/extra’ to hint.
 
 #### 2. Install dependency packages
 Before the work, some dependency packages needs to be installed
@@ -97,24 +97,24 @@ install.packages("BiocManager")
 BiocManager::install("DiffBind")
 ```
 
-#### 3.	Run pretreatment shiny app
-We design a local shiny app to help you do pretreatment. Firstly, you can download the source of ATAC-DEA including Data Pretreatment APP in Github ATAC-DEA (extra example pretreatment files: http://59.110.11.223:3838/ATAC-DEA_DataPretreatment.zip). After that, you can run these commands in terminal to start the app:
+#### 3.	Run preparation shiny application
+We design a local shiny app to help you do preparation. Firstly, you can download the source of ATAC-DEA including Data Preparation Application in Github ATAC-DEA (extra example preparation files: http://59.110.11.223:3838/ATAC-DEA_DataPretreatment.zip). After that, you can run these commands in terminal to start the app:
 ```
-#cd ./ATAC-DEA/ATAC-DEA_DataPretreatment
+#cd ./ATAC-DEA/DataPreparation
                       
 #R -e 'shiny::runApp ()'
 ```
 After the all starts successfully, type the url (http://127.0.0.1:xxxx) in your browser.
 
 Or, you can run this app in Rstudio.
-#### 4.	The panel of ATAC-DEA_DataPretreatment
-ATAC-DEA_DataPretreatment helps you build up the sample sheet that DiffBind needs.
+#### 4.	The panel of DataPreparation
+DataPreparation helps you build up the sample sheet that DiffBind needs.
 
 1)	Open ‘Create DEList’ tab. If you have completed DEList, you can directly upload it and you can also edit it in this panel.
 
 2)	Set the work space, if the datapath in your DEList is relative path. The final result file ‘peak_data_collection’ file will also be sived in the work space
 
-3)	Input the information of your sample. The DEList in ATAC-DEA/ATAC-DEA_DataPretreatment/extra shows what each variable represents.
+3)	Input the information of your sample. The DEList in ATAC-DEA/DataPreparation/extra shows what each variable represents.
 
 4)	Select the mapping results file and peak calling results file of each sample. These two buttons only record the relative paths, so don't need to worry about the size of files.
 
@@ -140,7 +140,7 @@ Open http://www.atac-dea.xyz:3838/ATAC-DEA
 
 1)	Example data: no files need to be uploaded. ATAC-DEA will use data of breast cancer cell to help you explore it.
 
-2)	Your own data: upload your peak collection result file generated in pretreatment step and peak calling results files of your data. You can check your data in ‘Check your Sample Sheet’ box.
+2)	Your own data: upload your peak collection result file generated in preparation step and peak calling results files of your data. You can check your data in ‘Check your Sample Sheet’ box.
 
 2.	Select the organism of your data: ATAC-DEA now provides ‘Homo sapiens’ and ‘Mus musculus’ to select. When all above is done, select ‘Go Next’ button
 ![image](https://github.com/sufangwang-npu/ATAC-DEA/blob/main/WWW/Tutorial1.jpg)
