@@ -1,9 +1,0 @@
-SampleID,Tissue,Factor,Condition,Treatment,Replicate,bamReads,Peaks,PeakCaller
-E14Epi1,E14Epi,Epi,E14,Full-Media,1,reads/chr18_E14Epi_1.bam,peaks/chr18_E14Epi_1.bed,bed
-E14Epi2,E14Epi,Epi,E14,Full-Media,2,reads/chr18_E14Epi_2.bam,peaks/chr18_E14Epi_2.bed,bed
-E14Fiber1,E14Fiber,Fiber,E14,Full-Media,1,reads/chr18_E14Fiber_1.bam,peaks/chr18_E14Fiber_1.bed,bed
-E14Fiber2,E14Fiber,Fiber,E14,Full-Media,2,reads/chr18_E14Fiber_2.bam,peaks/chr18_E14Fiber_2.bed,bed
-P1Epi1,P1Epi,Epi,P1,Full-Media,1,reads/chr18_P1Epi_1.bam,peaks/chr18_P1Epi_1.bed,bed
-P1Epi2,P1Epi,Epi,P1,Full-Media,2,reads/chr18_P1Epi_2.bam,peaks/chr18_P1Epi_2.bed,bed
-P1Fiber1,P1Fiber,Fiber,P1,Full-Media,1,reads/chr18_P1Fiber_1.bam,peaks/chr18_P1Fiber_1.bed,bed
-P1Fiber2,P1Fiber,Fiber,P1,Full-Media,2,reads/chr18_P1Fiber_2.bam,peaks/chr18_P1Fiber_2.bed,bed
