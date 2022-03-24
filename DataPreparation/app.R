@@ -8,7 +8,7 @@ ui <- fluidPage(
 
   theme = bs_theme(version = 4, bootswatch = "cosmo"),
 
-  titlePanel("ATAC-DEA Data Pretreatment"),
+  titlePanel("ATAC-DEA Data Preparation"),
 
   fluidRow(
       tabsetPanel(id="dataPretreatment",
@@ -16,33 +16,33 @@ ui <- fluidPage(
                  fluidRow(
                    column(1),
                    column(10,
-                 h1("ATAC-DEA Data Pretreatment Guide."),
+                 h1("ATAC-DEA Data Preparation Guide."),
                  h2("1.	Organize your data files"),
-                 HTML("<p>To do data pretreatment, three files are needed. We
+                 HTML("<p>To do data preparation, three files are needed. We
                       recommend organizing all of the data files in one directory,
                       and placing <b>mapping results files</b> (generally .bam file) in ‘./reads’;
                       placing <b>peak calling results files</b> (generally .bed file) in ‘./peaks’.
-                      We use some example files in ‘ATAC-DEA/ATAC-DEA_DataPretreatment/extra’ to hint.</p>"),
+                      We use some example files in ‘ATAC-DEA/DataPreparation/extra’ to hint.</p>"),
                  h2("2. Install dependency packages"),
                  p("Before the work, some dependency packages needs to be installed"),
                  HTML('<pre><code class="language-bash">install.packages(c("shiny", "shinyFiles", "stringr"))
                       \nif (!require("BiocManager", quietly = TRUE))
                       \ninstall.packages("BiocManager")
                       \nBiocManager::install("DiffBind")</code></pre>'),
-                 h2("3.	Run pretreatment shiny app."),
-                 HTML('<p>We design a local shiny app to help you do pretreatment. Firstly, you can download the source of ATAC-DEA including
-                 Data Pretreatment APP in Github <a href="https://github.com/sufangwang-npu/ATAC-DEA">ATAC-DEA</a>. After that, you can run
+                 h2("3.	Run preparation shiny app."),
+                 HTML('<p>We design a local shiny app to help you do preparation. Firstly, you can download the source of ATAC-DEA including
+                 Data Preprartion Application in Github <a href="https://github.com/sufangwang-npu/ATAC-DEA">ATAC-DEA</a>. After that, you can run
                       these commands in terminal to start the app:</p>'),
-                 HTML("<pre><code class='language-bash'>#cd ./ATAC-DEA/ATAC-DEA_DataPretreatment
+                 HTML("<pre><code class='language-bash'>#cd ./ATAC-DEA/DataPreparation
                       \n#R -e 'shiny::runApp ()'</code></pre>"),
                  p("After the all starts successfully, type the url (http://127.0.0.1:xxxx) in your browser."),
                  p("Or, you can run this app in Rstudio."),
-                 h2("4.	The panel of ATAC-DEA_DataPretreatment"),
+                 h2("4.	The panel of DataPreparation"),
                  HTML("
-                 <p>ATAC-DEA_DataPretreatment helps you build up the sample sheet that DiffBind needs.</p>
+                 <p>DataPreparation helps you build up the sample sheet that DiffBind needs.</p>
                  <p>1)	Open ‘Create DEList’ tab. If you have completed DEList, you can directly upload it and you can also edit it in this panel.</p>
                  <p>2)	Set the work space, if the datapath in your DEList is relative path. The final result file ‘peak_data_collection’ file will also be sived in the work space</p>
-                 <p>3)	Input the information of your sample. The DEList in ATAC-DEA/ATAC-DEA_DataPretreatment/extra shows what each variable represents.</p>
+                 <p>3)	Input the information of your sample. The DEList in ATAC-DEA/DataParation/extra shows what each variable represents.</p>
                  <p>4)	Select the mapping results file and peak calling results file of each sample. These two buttons only record the relative paths, so don't need to worry about the size of files.</p>
                  <p>5)	Select ‘Insert’ to add a new line and select ‘remove’ to remove the latest line.</p>
                  <p>6)	You can check your DEList here</p>
